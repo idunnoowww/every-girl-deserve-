@@ -1,0 +1,863 @@
+```html
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIRL DAY — For Every Girl 🎀</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lora:ital,wght@0,400..700;1,400..700&family=Playfair+Display:ital,wght@0,400..700;1,400..700&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dustyRose: '#C98F9B',
+                        cream: '#F7EFE3',
+                        blush: '#E8C5C8',
+                        mutedRed: '#8E3F4D',
+                        darkBrown: '#3B2928',
+                        softCream: '#FAF6F0',
+                        warmGold: '#D4AF37'
+                    },
+                    fontFamily: {
+                        title: ['"Cormorant Garamond"', '"Playfair Display"', 'serif'],
+                        playfair: ['"Playfair Display"', 'serif'],
+                        body: ['"Lora"', '"DM Sans"', 'serif'],
+                        hand: ['"Caveat"', 'cursive']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Base styles */
+        body {
+            background-color: #F7EFE3;
+            color: #3B2928;
+            font-family: 'Lora', serif;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Paper texture overlay */
+        .paper-texture {
+            background-image: radial-gradient(#3b2928 0.4px, transparent 0.4px), radial-gradient(#8e3f4d 0.4px, #f7efe3 0.4px);
+            background-size: 16px 16px;
+            background-position: 0 0, 8px 8px;
+            opacity: 0.04;
+            pointer-events: none;
+        }
+
+        /* Torn paper edge effect */
+        .torn-paper {
+            background: #FAF6F0;
+            box-shadow: 0 10px 30px -5px rgba(59, 41, 40, 0.1);
+            position: relative;
+        }
+        .torn-paper::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: radial-gradient(circle, transparent 60%, #FAF6F0 65%);
+            background-size: 16px 20px;
+        }
+        .torn-paper::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: radial-gradient(circle, transparent 60%, #FAF6F0 65%);
+            background-size: 16px 20px;
+            transform: rotate(180deg);
+        }
+
+        /* Washi tape visual accent */
+        .washi-tape {
+            background: rgba(232, 197, 200, 0.55);
+            backdrop-filter: blur(2px);
+            border-left: 2px dashed rgba(142, 63, 77, 0.3);
+            border-right: 2px dashed rgba(142, 63, 77, 0.3);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+
+        /* 3D Flip Card Effect */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .flip-card-inner {
+            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F7EFE3;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #C98F9B;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #8E3F4D;
+        }
+
+        /* Envelope interactive styling */
+        .envelope-wrapper {
+            perspective: 1000px;
+        }
+        .envelope {
+            position: relative;
+            width: 320px;
+            height: 220px;
+            background: #E8C5C8;
+            border-radius: 8px;
+            box-shadow: 0 15px 35px rgba(59, 41, 40, 0.15);
+            cursor: pointer;
+            transition: transform 0.4s ease;
+        }
+        @media (min-width: 640px) {
+            .envelope {
+                width: 420px;
+                height: 280px;
+            }
+        }
+        .envelope:hover {
+            transform: translateY(-5deg);
+        }
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 0;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            border-top: 130px solid #C98F9B;
+            transform-origin: top;
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 3;
+        }
+        @media (min-width: 640px) {
+            .envelope-flap {
+                border-left-width: 210px;
+                border-right-width: 210px;
+                border-top-width: 160px;
+            }
+        }
+        .envelope.open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+        .envelope-pocket {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 0;
+            border-left: 160px solid #E8C5C8;
+            border-right: 160px solid #E8C5C8;
+            border-bottom: 110px solid #d9abb2;
+            border-radius: 0 0 8px 8px;
+            z-index: 2;
+        }
+        @media (min-width: 640px) {
+            .envelope-pocket {
+                border-left-width: 210px;
+                border-right-width: 210px;
+                border-bottom-width: 140px;
+            }
+        }
+        .envelope-letter {
+            position: absolute;
+            left: 20px;
+            right: 20px;
+            bottom: 15px;
+            height: 180px;
+            background: #FAF6F0;
+            border-radius: 6px;
+            padding: 20px;
+            transition: transform 0.8s ease 0.3s, opacity 0.5s ease;
+            z-index: 2;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            opacity: 0.9;
+        }
+        @media (min-width: 640px) {
+            .envelope-letter {
+                height: 230px;
+            }
+        }
+        .envelope.open .envelope-letter {
+            transform: translateY(-120px) scale(1.05);
+            z-index: 4;
+            opacity: 1;
+        }
+
+        /* Floating music indicator pulse */
+        @keyframes subtlePulse {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.08); opacity: 1; }
+        }
+        .pulse-gentle {
+            animation: subtlePulse 3s infinite ease-in-out;
+        }
+
+        /* Float animation for decorative ribbon/flowers */
+        @keyframes floatGentle {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(2deg); }
+        }
+        .animate-float {
+            animation: floatGentle 5s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-blush selection:text-mutedRed">
+
+    <!-- Paper Texture Overlay -->
+    <div class="fixed inset-0 paper-texture z-50"></div>
+
+    <!-- Canvas Floating Petals Overlay -->
+    <canvas id="petalsCanvas" class="fixed inset-0 pointer-events-none z-30"></canvas>
+
+    <!-- Top Fixed Bar: Audio Controls & Floating Badge -->
+    <header class="fixed top-0 left-0 right-0 z-40 px-4 py-3 flex justify-between items-center backdrop-blur-sm bg-cream/70 border-b border-blush/30">
+        <div class="flex items-center space-x-2">
+            <span class="text-xl">🎀</span>
+            <span class="font-hand text-xl md:text-2xl text-mutedRed font-bold tracking-wide">Girl Day</span>
+        </div>
+        
+        <button id="musicBtn" onclick="toggleAudio()" class="flex items-center space-x-2 bg-softCream/90 border border-blush px-3 py-1.5 rounded-full shadow-sm hover:shadow transition-all duration-300 text-xs md:text-sm text-darkBrown group">
+            <span id="musicIcon" class="text-mutedRed transition-transform group-hover:scale-125">♫</span>
+            <span id="musicText" class="font-body text-xs">music</span>
+            <span id="musicVisualizer" class="hidden flex items-end gap-0.5 h-3">
+                <span class="w-0.5 h-full bg-mutedRed animate-bounce" style="animation-delay: 0.1s"></span>
+                <span class="w-0.5 h-2/3 bg-mutedRed animate-bounce" style="animation-delay: 0.3s"></span>
+                <span class="w-0.5 h-full bg-mutedRed animate-bounce" style="animation-delay: 0.2s"></span>
+            </span>
+        </button>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-grow pt-16">
+
+        <!-- PAGE 01 — OPENING 🎀 -->
+        <section id="page1" class="min-h-[92vh] flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden">
+            <!-- Decorative corner SVG flowers -->
+            <div class="absolute top-10 left-4 md:left-12 opacity-40 pointer-events-none animate-float">
+                <svg width="80" height="80" viewBox="0 0 100 100" fill="#C98F9B">
+                    <circle cx="50" cy="30" r="15"/>
+                    <circle cx="70" cy="50" r="15"/>
+                    <circle cx="50" cy="70" r="15"/>
+                    <circle cx="30" cy="50" r="15"/>
+                    <circle cx="50" cy="50" r="10" fill="#8E3F4D"/>
+                </svg>
+            </div>
+            <div class="absolute bottom-10 right-4 md:right-12 opacity-40 pointer-events-none animate-float" style="animation-delay: -2.5s;">
+                <svg width="90" height="90" viewBox="0 0 100 100" fill="#E8C5C8">
+                    <circle cx="50" cy="30" r="15"/>
+                    <circle cx="70" cy="50" r="15"/>
+                    <circle cx="50" cy="70" r="15"/>
+                    <circle cx="30" cy="50" r="15"/>
+                    <circle cx="50" cy="50" r="10" fill="#3B2928"/>
+                </svg>
+            </div>
+
+            <!-- Header Title Box -->
+            <div class="text-center max-w-2xl mx-auto z-10 mb-8 px-4">
+                <div class="inline-block bg-blush/40 px-4 py-1 rounded-full text-xs md:text-sm font-hand text-mutedRed mb-4 border border-blush/60">
+                    ✨ a tiny corner created just for you
+                </div>
+                <h1 class="font-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-mutedRed font-semibold tracking-tight leading-tight uppercase">
+                    FOR EVERY GIRL,<br>THIS LITTLE WORLD IS FOR YOU.
+                </h1>
+                <p class="font-hand text-xl md:text-2xl text-darkBrown/80 mt-4 max-w-lg mx-auto">
+                    a little celebration of girlhood, softness, strength, and you.
+                </p>
+            </div>
+
+            <!-- Envelope Container -->
+            <div class="envelope-wrapper my-6 z-10">
+                <div id="mainEnvelope" class="envelope flex flex-col justify-center items-center" onclick="openEnvelope()">
+                    <div class="envelope-flap"></div>
+                    
+                    <!-- Seal button inside flap -->
+                    <div id="envelopeSeal" class="absolute z-10 top-[80px] sm:top-[100px] w-12 h-12 md:w-14 md:h-14 bg-mutedRed rounded-full border-2 border-warmGold flex items-center justify-center text-cream shadow-md transition-transform duration-300 hover:scale-110">
+                        <span class="text-xl">♡</span>
+                    </div>
+
+                    <div class="envelope-letter flex flex-col items-center justify-center text-center">
+                        <p class="font-hand text-2xl text-mutedRed mb-1">Surat untukmu 💌</p>
+                        <p class="font-body text-xs text-darkBrown/70 italic">Klik tombol di bawah untuk membuka halaman pertamamu...</p>
+                    </div>
+
+                    <div class="envelope-pocket"></div>
+                </div>
+            </div>
+
+            <!-- Open Button -->
+            <div class="z-20 mt-8">
+                <button id="openBtn" onclick="openEnvelope()" class="px-8 py-3.5 bg-mutedRed hover:bg-mutedRed/90 text-cream rounded-full font-body text-base md:text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center space-x-2 border border-warmGold/40 group">
+                    <span>♡ open this</span>
+                    <span class="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- PAGE 02 — DEAR GIRL 💌 -->
+        <section id="page2" class="min-h-screen flex items-center justify-center px-4 py-16 relative">
+            <div class="max-w-3xl w-full mx-auto">
+                
+                <!-- Main Letter Card (Vintage Torn Paper Style) -->
+                <div class="torn-paper p-6 sm:p-10 md:p-14 rounded-lg my-8 relative">
+                    
+                    <!-- Decorative Vintage Stamps -->
+                    <div class="absolute top-4 right-4 sm:top-6 sm:right-6 border-2 border-dashed border-mutedRed/40 p-2 rounded bg-blush/20 text-center transform rotate-3 hidden sm:block">
+                        <p class="font-hand text-xs text-mutedRed uppercase font-bold tracking-widest">POSTALE LOVE</p>
+                        <p class="font-title text-lg text-darkBrown">2026</p>
+                        <p class="text-[10px] text-darkBrown/60">GIRL DAY SPECIAL</p>
+                    </div>
+
+                    <!-- Washi tape top corner -->
+                    <div class="washi-tape absolute -top-3 left-1/2 -translate-x-1/2 w-32 h-7 transform -rotate-1"></div>
+
+                    <!-- Title -->
+                    <div class="text-center mb-8 pt-4">
+                        <span class="text-2xl">💌</span>
+                        <h2 class="font-title text-3xl sm:text-4xl text-mutedRed font-semibold mt-2">
+                            untukmu, perempuan
+                        </h2>
+                        <div class="w-16 h-0.5 bg-dustyRose/50 mx-auto mt-3"></div>
+                    </div>
+
+                    <!-- Letter Content -->
+                    <div class="font-body text-darkBrown text-base sm:text-lg leading-relaxed sm:leading-loose space-y-5 text-justify sm:text-left">
+                        <p>
+                            hari ini adalah hari kecil untuk merayakanmu.
+                        </p>
+                        <p>
+                            untuk setiap perempuan yang sedang bertumbuh, belajar mengenal dirinya sendiri, mencintai, bermimpi, berjuang, atau sekadar menjalani hari sebaik yang dia bisa.
+                        </p>
+                        <p class="bg-blush/20 p-4 rounded-lg border-l-2 border-dustyRose italic">
+                            kamu nggak harus sempurna untuk dirayakan. nggak harus selalu kuat, selalu cantik, atau selalu tahu harus ke mana.
+                        </p>
+                        <p>
+                            kamu boleh berubah. boleh salah. boleh istirahat. boleh menjadi dirimu sendiri.
+                        </p>
+                        <p class="font-medium text-mutedRed">
+                            jadi, untuk semua perempuan dengan segala versi dirinya—
+                        </p>
+                        <p class="text-xl sm:text-2xl font-title text-mutedRed font-bold text-center py-2">
+                            selamat hari perempuan. 🌷
+                        </p>
+                        <p class="text-center italic text-darkBrown/90">
+                            semoga kamu selalu punya alasan untuk mencintai dirimu sendiri.
+                        </p>
+                    </div>
+
+                    <!-- Sign-off -->
+                    <div class="mt-10 text-right">
+                        <p class="font-hand text-2xl sm:text-3xl text-mutedRed font-bold">
+                            — with love, for every girl ♡
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Scroll down guidance indicator -->
+                <div class="text-center mt-6">
+                    <a href="#page3" class="inline-flex flex-col items-center text-xs font-hand text-mutedRed/80 hover:text-mutedRed transition-colors">
+                        <span>scroll ke bawah</span>
+                        <span class="animate-bounce text-base mt-1">↓</span>
+                    </a>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- PAGE 03 — FOR EVERY KIND OF GIRL 🌷 -->
+        <section id="page3" class="min-h-screen px-4 py-20 max-w-6xl mx-auto">
+            
+            <!-- Section Header -->
+            <div class="text-center max-w-xl mx-auto mb-14">
+                <span class="text-3xl inline-block mb-2 animate-float">🌷</span>
+                <h2 class="font-title text-3xl sm:text-4xl md:text-5xl text-mutedRed font-semibold">
+                    untuk setiap perempuan
+                </h2>
+                <p class="font-hand text-xl sm:text-2xl text-darkBrown/80 mt-2">
+                    mungkin salah satunya adalah kamu.
+                </p>
+                <p class="text-xs text-darkBrown/60 mt-3 italic">
+                    (klik tiap kartu untuk membaca pesan hangat di baliknya ♡)
+                </p>
+            </div>
+
+            <!-- Grid of 7 Flip Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 px-2">
+
+                <!-- CARD 1 -->
+                <div class="flip-card perspective-1000 h-64 cursor-pointer" onclick="flipCard(this)">
+                    <div class="flip-card-inner relative w-full h-full rounded-2xl shadow-md border border-blush/60 bg-softCream">
+                        <!-- Front -->
+                        <div class="flip-card-front absolute inset-0 p-6 flex flex-col justify-between items-center text-center rounded-2xl bg-softCream">
+                            <div class="washi-tape w-20 h-5 absolute -top-2 left-1/2 -translate-x-1/2"></div>
+                            <span class="text-4xl mt-4">🎀</span>
+                            <h3 class="font-title text-xl font-bold text-mutedRed my-auto px-2">
+                                untuk yang terlalu banyak berpikir
+                            </h3>
+                            <span class="text-xs font-hand text-darkBrown/60">ketuk kartu ini ✦</span>
+                        </div>
+                        <!-- Back -->
+                        <div class="flip-card-back absolute inset-0 p-6 flex flex-col justify-center items-center text-center rounded-2xl bg-blush/40 border-2 border-dustyRose/40">
+                            <p class="font-body text-darkBrown text-base leading-relaxed">
+                                “nggak semua hal harus kamu selesaikan hari ini. beri kepalamu sedikit istirahat.”
+                            </p>
+                            <span class="mt-4 text-xs font-hand text-mutedRed">♡ kamu sudah cukup</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- CARD 2 -->
+                <div class="flip-card perspective-1000 h-64 cursor-pointer" onclick="flipCard(this)">
+                    <div class="flip-card-inner relative w-full h-full rounded-2xl shadow-md border border-blush/60 bg-softCream">
+                        <div class="flip-card-front absolute inset-0 p-6 flex flex-col justify-between items-center text-center rounded-2xl bg-softCream">
+                            <div class="washi-tape w-20 h-5 absolute -top-2 left-1/2 -translate-x-1/2"></div>
+                            <span class="text-4xl mt-4">🌷</span>
+                            <h3 class="font-title text-xl font-bold text-mutedRed my-auto px-2">
+                                untuk yang selalu terlihat kuat
+                            </h3>
+                            <span class="text-xs font-hand text-darkBrown/60">ketuk kartu ini ✦</span>
+                        </div>
+                        <div class="flip-card-back absolute inset-0 p-6 flex flex-col justify-center items-center text-center rounded-2xl bg-blush/40 border-2 border-dustyRose/40">
+                            <p class="font-body text-darkBrown text-base leading-relaxed">
+                                “kamu juga boleh lelah. nggak apa-apa kalau sesekali kamu butuh seseorang untuk bersandar.”
+                            </p>
+                            <span class="mt-4 text-xs font-hand text-mutedRed">♡ sandarkan lelahmu</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 3 -->
+                <div class="flip-card perspective-1000 h-64 cursor-pointer" onclick="flipCard(this)">
+                    <div class="flip-card-inner relative w-full h-full rounded-2xl shadow-md border border-blush/60 bg-softCream">
+                        <div class="flip-card-front absolute inset-0 p-6 flex flex-col justify-between items-center text-center rounded-2xl bg-softCream">
+                            <div class="washi-tape w-20 h-5 absolute -top-2 left-1/2 -translate-x-1/2"></div>
+                            <span class="text-4xl mt-4">🪞</span>
+                            <h3 class="font-title text-xl font-bold text-mutedRed my-auto px-2">
+                                untuk yang masih mencari dirinya sendiri
+                            </h3>
+                            <span class="text-xs font-hand text-darkBrown/60">ketuk kartu ini ✦</span>
+                        </div>
+                        <div class="flip-card-back absolute inset-0 p-6 flex flex-col justify-center items-center text-center rounded-2xl bg-blush/40 border-2 border-dustyRose/40">
+                            <p class="font-body text-darkBrown text-base leading-relaxed">
+                                “kamu nggak harus punya semua jawabannya sekarang. kenali dirimu perlahan.”
+                            </p>
+                            <span class="mt-4 text-xs font-hand text-mutedRed">♡ nikmati prosesnya</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 4 -->
+                <div class="flip-card perspective-1000 h-64 cursor-pointer" onclick="flipCard(this)">
+                    <div class="flip-card-inner relative w-full h-full rounded-2xl shadow-md border border-blush/60 bg-softCream">
+                        <div class="flip-card-front absolute inset-0 p-6 flex flex-col justify-between items-center text-center rounded-2xl bg-softCream">
+                            <div class="washi-tape w-20 h-5 absolute -top-2 left-1/2 -translate-x-1/2"></div>
+                            <span class="text-4xl mt-4">💌</span>
+                            <h3 class="font-title text-xl font-bold text-mutedRed my-auto px-2">
+                                untuk yang sedang jatuh cinta
+                            </h3>
+                            <span class="text-xs font-hand text-darkBrown/60">ketuk kartu ini ✦</span>
+                        </div>
+                        <div class="flip-card-back absolute inset-0 p-6 flex flex-col justify-center items-center text-center rounded-2xl bg-blush/40 border-2 border-dustyRose/40">
+                            <p class="font-body text-darkBrown text-base leading-relaxed">
+                                “semoga cinta yang kamu temukan membuatmu merasa aman untuk menjadi dirimu sendiri.”
+                            </p>
+                            <span class="mt-4 text-xs font-hand text-mutedRed">♡ cintai dirimu juga</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- CARD 5 -->
+                <div class="flip-card perspective-1000 h-64 cursor-pointer" onclick="flipCard(this)">
+                    <div class="flip-card-inner relative w-full h-full rounded-2xl shadow-md border border-blush/60 bg-softCream">
+                        <div class="flip-card-front absolute inset-0 p-6 flex flex-col justify-between items-center text-center rounded-2xl bg-softCream">
+                            <div class="washi-tape w-20 h-5 absolute -top-2 left-1/2 -translate-x-1/2"></div>
+                            <span class="text-4xl mt-4">🌙</span>
+                            <h3 class="font-title text-xl font-bold text-mutedRed my-auto px-2">
+                                untuk yang sedang patah hati
+                            </h3>
+                            <span class="text-xs font-hand text-darkBrown/60">ketuk kartu ini ✦</span>
+                        </div>
+                        <div class="flip-card-back absolute inset-0 p-6 flex flex-col justify-center items-center text-center rounded-2xl bg-blush/40 border-2 border-dustyRose/40">
+                            <p class="font-body text-darkBrown text-base leading-relaxed">
+                                “nggak apa-apa kalau butuh waktu. beberapa hal memang perlu perlahan untuk sembuh.”
+                            </p>
+                            <span class="mt-4 text-xs font-hand text-mutedRed">♡ peluk hangat untukmu</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 6 -->
+                <div class="flip-card perspective-1000 h-64 cursor-pointer" onclick="flipCard(this)">
+                    <div class="flip-card-inner relative w-full h-full rounded-2xl shadow-md border border-blush/60 bg-softCream">
+                        <div class="flip-card-front absolute inset-0 p-6 flex flex-col justify-between items-center text-center rounded-2xl bg-softCream">
+                            <div class="washi-tape w-20 h-5 absolute -top-2 left-1/2 -translate-x-1/2"></div>
+                            <span class="text-4xl mt-4">🌱</span>
+                            <h3 class="font-title text-xl font-bold text-mutedRed my-auto px-2">
+                                untuk yang sedang bertumbuh
+                            </h3>
+                            <span class="text-xs font-hand text-darkBrown/60">ketuk kartu ini ✦</span>
+                        </div>
+                        <div class="flip-card-back absolute inset-0 p-6 flex flex-col justify-center items-center text-center rounded-2xl bg-blush/40 border-2 border-dustyRose/40">
+                            <p class="font-body text-darkBrown text-base leading-relaxed">
+                                “kamu mungkin nggak sadar, tapi kamu sudah berubah begitu jauh dari dirimu yang dulu.”
+                            </p>
+                            <span class="mt-4 text-xs font-hand text-mutedRed">♡ bangga padamu</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 7 (Centered on desktop if 3 columns) -->
+                <div class="flip-card perspective-1000 h-64 cursor-pointer sm:col-span-2 lg:col-span-1 lg:col-start-2" onclick="flipCard(this)">
+                    <div class="flip-card-inner relative w-full h-full rounded-2xl shadow-md border border-blush/60 bg-softCream">
+                        <div class="flip-card-front absolute inset-0 p-6 flex flex-col justify-between items-center text-center rounded-2xl bg-softCream">
+                            <div class="washi-tape w-20 h-5 absolute -top-2 left-1/2 -translate-x-1/2"></div>
+                            <span class="text-4xl mt-4">☀️</span>
+                            <h3 class="font-title text-xl font-bold text-mutedRed my-auto px-2">
+                                untuk yang sedang bahagia
+                            </h3>
+                            <span class="text-xs font-hand text-darkBrown/60">ketuk kartu ini ✦</span>
+                        </div>
+                        <div class="flip-card-back absolute inset-0 p-6 flex flex-col justify-center items-center text-center rounded-2xl bg-blush/40 border-2 border-dustyRose/40">
+                            <p class="font-body text-darkBrown text-base leading-relaxed">
+                                “nikmati saja. kamu nggak perlu merasa bersalah karena sedang bahagia.”
+                            </p>
+                            <span class="mt-4 text-xs font-hand text-mutedRed">♡ rayakan hari ini</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- PAGE 04 — THINGS YOU DESERVE TO HEAR 💗 -->
+        <section id="page4" class="min-h-screen px-4 py-20 bg-blush/10 my-10 relative">
+            <div class="max-w-5xl mx-auto">
+                
+                <!-- Section Header -->
+                <div class="text-center max-w-2xl mx-auto mb-16">
+                    <span class="text-3xl inline-block mb-2">💗</span>
+                    <h2 class="font-title text-3xl sm:text-4xl md:text-5xl text-mutedRed font-semibold">
+                        hal-hal yang mungkin perlu kamu dengar hari ini.
+                    </h2>
+                    <p class="font-hand text-xl sm:text-2xl text-darkBrown/80 mt-3">
+                        jadi, anggap ini sebagai pengingat kecil.
+                    </p>
+                </div>
+
+                <!-- Scrapbook Journal Sticky Notes Layout -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-2">
+
+                    <!-- Sticky Note 1 -->
+                    <div class="bg-softCream p-6 rounded-lg shadow-md border-t-4 border-dustyRose transform -rotate-2 hover:rotate-0 hover:scale-105 transition-all duration-300 relative group">
+                        <div class="washi-tape w-16 h-4 absolute -top-2 left-1/2 -translate-x-1/2"></div>
+                        <span class="text-xs font-hand text-mutedRed font-bold">01.</span>
+                        <p class="font-hand text-2xl text-darkBrown mt-2 leading-snug">
+                            kamu nggak harus selalu kuat.
+                        </p>
+                        <div class="text-right mt-4 opacity-40 group-hover:opacity-100 transition-opacity">
+                            <span class="text-sm">🌸</span>
+                        </div>
+                    </div>
+                    <!-- Sticky Note 2 -->
+                    <div class="bg-blush/30 p-6 rounded-lg shadow-md border-t-4 border-mutedRed transform rotate-3 hover:rotate-0 hover:scale-105 transition-all duration-300 relative group">
+                        <div class="washi-tape w-16 h-4 absolute -top-2 left-1/2 -translate-x-1/2"></div>
+                        <span class="text-xs font-hand text-mutedRed font-bold">02.</span>
+                        <p class="font-hand text-2xl text-darkBrown mt-2 leading-snug">
+                            istirahat bukan berarti kamu malas.
+                        </p>
+                        <div class="text-right mt-4 opacity-40 group-hover:opacity-100 transition-opacity">
+                            <span class="text-sm">☕</span>
+                        </div>
+                    </div>
+
+                    <!-- Sticky Note 3 -->
+                    <div class="bg-softCream p-6 rounded-lg shadow-md border-t-4 border-dustyRose transform -rotate-1 hover:rotate-0 hover:scale-105 transition-all duration-300 relative group">
+                        <div class="washi-tape w-16 h-4 absolute -top-2 left-1/2 -translate-x-1/2"></div>
+                        <span class="text-xs font-hand text-mutedRed font-bold">03.</span>
+                        <p class="font-hand text-2xl text-darkBrown mt-2 leading-snug">
+                            kamu boleh berubah pikiran.
+                        </p>
+                        <div class="text-right mt-4 opacity-40 group-hover:opacity-100 transition-opacity">
+                            <span class="text-sm">🍃</span>
+                        </div>
+                    </div>
+
+                    <!-- Sticky Note 4 -->
+                    <div class="bg-blush/30 p-6 rounded-lg shadow-md border-t-4 border-mutedRed transform rotate-2 hover:rotate-0 hover:scale-105 transition-all duration-300 relative group">
+                        <div class="washi-tape w-16 h-4 absolute -top-2 left-1/2 -translate-x-1/2"></div>
+                        <span class="text-xs font-hand text-mutedRed font-bold">04.</span>
+                        <p class="font-hand text-2xl text-darkBrown mt-2 leading-snug">
+                            kamu boleh berkata tidak.
+                        </p>
+                        <div class="text-right mt-4 opacity-40 group-hover:opacity-100 transition-opacity">
+                            <span class="text-sm">🧸</span>
+                        </div>
+                    </div>
+
+                    <!-- Sticky Note 5 -->
+                    <div class="bg-blush/30 p-6 rounded-lg shadow-md border-t-4 border-mutedRed transform rotate-1 hover:rotate-0 hover:scale-105 transition-all duration-300 relative group">
+                        <div class="washi-tape w-16 h-4 absolute -top-2 left-1/2 -translate-x-1/2"></div>
+                        <span class="text-xs font-hand text-mutedRed font-bold">05.</span>
+                        <p class="font-hand text-2xl text-darkBrown mt-2 leading-snug">
+                            kamu nggak harus mengecilkan dirimu supaya orang lain nyaman.
+                        </p>
+                        <div class="text-right mt-4 opacity-40 group-hover:opacity-100 transition-opacity">
+                            <span class="text-sm">✨</span>
+                        </div>
+                    </div>
+
+                    <!-- Sticky Note 6 -->
+                    <div class="bg-softCream p-6 rounded-lg shadow-md border-t-4 border-dustyRose transform -rotate-3 hover:rotate-0 hover:scale-105 transition-all duration-300 relative group">
+                        <div class="washi-tape w-16 h-4 absolute -top-2 left-1/2 -translate-x-1/2"></div>
+                        <span class="text-xs font-hand text-mutedRed font-bold">06.</span>
+                        <p class="font-hand text-2xl text-darkBrown mt-2 leading-snug">
+                            kamu pantas dicintai tanpa harus menjadi orang lain.
+                        </p>
+                        <div class="text-right mt-4 opacity-40 group-hover:opacity-100 transition-opacity">
+                            <span class="text-sm">🌷</span>
+                        </div>
+                    </div>
+
+                    <!-- Sticky Note 7 -->
+                    <div class="bg-blush/30 p-6 rounded-lg shadow-md border-t-4 border-mutedRed transform rotate-2 hover:rotate-0 hover:scale-105 transition-all duration-300 relative group">
+                        <div class="washi-tape w-16 h-4 absolute -top-2 left-1/2 -translate-x-1/2"></div>
+                        <span class="text-xs font-hand text-mutedRed font-bold">07.</span>
+                        <p class="font-hand text-2xl text-darkBrown mt-2 leading-snug">
+                            kamu nggak terlambat. tumbuhlah dengan waktumu sendiri.
+                        </p>
+                        <div class="text-right mt-4 opacity-40 group-hover:opacity-100 transition-opacity">
+                            <span class="text-sm">🌱</span>
+                        </div>
+                    </div>
+
+                    <!-- Sticky Note 8 -->
+                    <div class="bg-softCream p-6 rounded-lg shadow-md border-t-4 border-dustyRose transform -rotate-2 hover:rotate-0 hover:scale-105 transition-all duration-300 relative group">
+                        <div class="washi-tape w-16 h-4 absolute -top-2 left-1/2 -translate-x-1/2"></div>
+                        <span class="text-xs font-hand text-mutedRed font-bold">08.</span>
+                        <p class="font-hand text-2xl text-darkBrown mt-2 leading-snug">
+                            kamu sudah melakukan yang terbaik yang kamu bisa.
+                        </p>
+                        <div class="text-right mt-4 opacity-40 group-hover:opacity-100 transition-opacity">
+                            <span class="text-sm">👑</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 05 — A LITTLE NOTE FOR YOURSELF 🪞 -->
+        <section id="page5" class="min-h-screen px-4 py-20 max-w-3xl mx-auto flex flex-col justify-center">
+            
+            <div class="text-center mb-10">
+                <span class="text-4xl inline-block mb-2">🪞</span>
+                <h2 class="font-title text-3xl sm:text-4xl md:text-5xl text-mutedRed font-semibold">
+                    sekarang, giliranmu.
+                </h2>
+                <p class="font-body text-base sm:text-lg text-darkBrown/90 mt-4 leading-relaxed max-w-xl mx-auto">
+                    selama ini kita terlalu sering mengatakan hal-hal baik kepada orang lain.
+                    jadi kali ini, coba katakan satu hal baik kepada dirimu sendiri.
+                </p>
+            </div>
+
+        // Soft click sound effect for interactive cards
+        function playChimeEffect() {
+            if (!audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.5);
+            } catch(e) {}
+        }
+
+        /* 
+         * ENVELOPE OPENING ANIMATION
+         */
+        function openEnvelope() {
+            initAudio();
+            playChimeEffect();
+            
+            const env = document.getElementById('mainEnvelope');
+            const seal = document.getElementById('envelopeSeal');
+            
+            if (!env.classList.contains('open')) {
+                env.classList.add('open');
+                seal.style.opacity = '0';
+                seal.style.transform = 'scale(0.5)';
+
+                // Smooth scroll to Page 2 after paper opening delay
+                setTimeout(() => {
+                    const page2 = document.getElementById('page2');
+                    page2.scrollIntoView({ behavior: 'smooth' });
+                }, 1000);
+            } else {
+                const page2 = document.getElementById('page2');
+                page2.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        /* 
+         * CARD FLIP INTERACTION
+         */
+        function flipCard(cardElement) {
+            playChimeEffect();
+            cardElement.classList.toggle('flipped');
+        }
+
+        /* 
+         * USER NOTE SAVE INTERACTION
+         */
+        function saveNote(event) {
+            event.preventDefault();
+            playChimeEffect();
+
+            const input = document.getElementById('userNoteInput').value.trim();
+            if (!input) return;
+
+            document.getElementById('displayNoteText').textContent = `“${input}”`;
+            
+            // Set current formatted date
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('noteDate').textContent = now.toLocaleDateString('id-ID', options);
+
+            document.getElementById('noteForm').classList.add('hidden');
+            const savedCard = document.getElementById('savedCard');
+            savedCard.classList.remove('hidden');
+            
+            // Smooth scroll to saved polaroid card
+            savedCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function resetNoteForm() {
+            document.getElementById('userNoteInput').value = '';
+            document.getElementById('noteForm').classList.remove('hidden');
+            document.getElementById('savedCard').classList.add('hidden');
+        }
+
+        /* 
+         * SCROLL TO TOP / START AGAIN
+         */
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => {
+                const env = document.getElementById('mainEnvelope');
+                const seal = document.getElementById('envelopeSeal');
+                if (env) env.classList.remove('open');
+                if (seal) {
+                    seal.style.opacity = '1';
+                    seal.style.transform = 'scale(1)';
+                }
+            }, 800);
+        }
+
+        /* 
+         * FLOATING PETALS CANVAS ANIMATION
+         */
+        const canvas = document.getElementById('petalsCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        const petals = [];
+        const petalColors = ['#E8C5C8', '#C98F9B', '#F7EFE3', '#E3A8B3'];
+
+        for (let i = 0; i < 25; i++) {
+            petals.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                size: Math.random() * 8 + 6,
+                color: petalColors[Math.floor(Math.random() * petalColors.length)],
+                speedY: Math.random() * 0.8 + 0.3,
+                speedX: Math.random() * 0.5 - 0.25,
+                angle: Math.random() * 360,
+                spin: Math.random() * 0.02 - 0.01
+            });
+        }
+
+        function drawPetals() {
+            ctx.clearRect(0, 0, width, height);
+
+            petals.forEach(p => {
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.angle);
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = 0.5;
+
+                // Draw oval petal shape
+                ctx.beginPath();
+                ctx.ellipse(0, 0, p.size, p.size / 2, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.restore();
+
+                // Update particle position
+                p.y += p.speedY;
+                p.x += Math.sin(p.y / 30) * 0.5 + p.speedX;
+                p.angle += p.spin;
+
+                // Loop petals when out of screen
+                if (p.y > height + 20) {
+                    p.y = -20;
+                    p.x = Math.random() * width;
+                }
+            });
+
+            requestAnimationFrame(drawPetals);
+        }
+
+        // Start animations on load
+        window.onload = function() {
+            drawPetals();
+        };
+    </script>
+</body>
+</html>
+```
